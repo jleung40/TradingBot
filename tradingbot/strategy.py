@@ -64,10 +64,8 @@ def _normalize_with_cap(row: pd.Series, max_weight: float) -> pd.Series:
             break
         w.loc[eligible] += excess * (w[eligible] / eligible_sum)
 
-    final_sum = w.sum()
-    if final_sum > 0.0:
-        w = w / final_sum
-    return w
+    # Keep cash buffer when max_weight prevents full investment.
+    return w.clip(lower=0.0, upper=max_weight)
 
 
 def generate_target_weights(prices: pd.DataFrame, cfg: StrategyConfig) -> pd.DataFrame:
